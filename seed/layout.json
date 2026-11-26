@@ -1,32 +1,32 @@
 {
   "panels": [
     {
-      "id": "panel-youtube",
-      "title": "YOUTUBE",
+      "id": "panel-pbs-newshour",
+      "title": "PBS NEWSHOUR",
       "badge": "VIDEO",
       "badgeColor": "red",
       "category": "youtube",
       "backing": "parchment",
       "order": 0,
       "colSpan": 1,
-      "windowSize": 6,
-      "feedIds": []
+      "windowSize": 3,
+      "feedIds": ["yt-pbs"]
     },
     {
-      "id": "panel-audio",
-      "title": "AUDIO",
+      "id": "panel-institutional-pods",
+      "title": "INSTITUTIONAL PODS",
       "badge": "PODCASTS",
       "badgeColor": "green",
       "category": "audio",
       "backing": "lined",
       "order": 1,
       "colSpan": 1,
-      "windowSize": 8,
-      "feedIds": []
+      "windowSize": 6,
+      "feedIds": ["pod-otm", "pod-feds", "pod-debate"]
     },
     {
-      "id": "panel-text",
-      "title": "TEXT",
+      "id": "panel-columnists",
+      "title": "COLUMNISTS I LIKE",
       "badge": "ARTICLES",
       "badgeColor": "amber",
       "category": "text",
@@ -34,7 +34,19 @@
       "order": 2,
       "colSpan": 1,
       "windowSize": 8,
-      "feedIds": []
+      "feedIds": ["text-brooks"]
+    },
+    {
+      "id": "panel-intl-public-media",
+      "title": "INTERNATIONAL PUBLIC MEDIA",
+      "badge": "VIDEO",
+      "badgeColor": "red",
+      "category": "youtube",
+      "backing": "parchment",
+      "order": 3,
+      "colSpan": 1,
+      "windowSize": 6,
+      "feedIds": ["yt-dw", "yt-rti", "yt-f24", "yt-abc"]
     }
   ]
 }

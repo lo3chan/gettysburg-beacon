@@ -1,42 +1,74 @@
 [
   {
-    "id": "yt-cwdd",
-    "title": "Civil War Digital Digest",
+    "id": "yt-pbs",
+    "title": "PBS NewsHour",
     "category": "youtube",
-    "url": "https://www.youtube.com/feeds/videos.xml?channel_id=UCR419HGD33ONzukp3c-WNPA",
-    "siteUrl": "https://www.youtube.com/@CivilWarDigitalDigest",
+    "url": "https://www.youtube.com/feeds/videos.xml?channel_id=UC6ZFN9Tx6xh-skXCuRHCDpQ",
+    "siteUrl": "https://www.youtube.com/@PBSNewsHour",
     "enabled": true
   },
   {
-    "id": "yt-abt",
-    "title": "American Battlefield Trust",
+    "id": "yt-dw",
+    "title": "DW News",
     "category": "youtube",
-    "url": "https://www.youtube.com/feeds/videos.xml?channel_id=UCUfsbWIraXIl7a6HKSJINUg",
-    "siteUrl": "https://www.youtube.com/@AmericanBattlefieldTrust",
+    "url": "https://www.youtube.com/feeds/videos.xml?channel_id=UCknLrEdhRCp1aegoMqRaCZg",
+    "siteUrl": "https://www.youtube.com/@dwnews",
     "enabled": true
   },
   {
-    "id": "text-ecw",
-    "title": "Emerging Civil War",
-    "category": "text",
-    "url": "https://emergingcivilwar.com/feed/",
-    "siteUrl": "https://emergingcivilwar.com",
+    "id": "yt-rti",
+    "title": "RTI English",
+    "category": "youtube",
+    "url": "https://www.youtube.com/feeds/videos.xml?channel_id=UCbkdna_8Xh4xO1DUNSxeFqQ",
+    "siteUrl": "https://www.youtube.com/@RtiEnglish",
     "enabled": true
   },
   {
-    "id": "text-cwm",
-    "title": "Civil War Monitor",
-    "category": "text",
-    "url": "https://www.civilwarmonitor.com/feed/",
-    "siteUrl": "https://www.civilwarmonitor.com",
+    "id": "yt-f24",
+    "title": "France 24 English",
+    "category": "youtube",
+    "url": "https://www.youtube.com/feeds/videos.xml?channel_id=UCQfwfsi5VrQ8yKZ-UWmAEFg",
+    "siteUrl": "https://www.youtube.com/@FRANCE24English",
     "enabled": true
   },
   {
-    "id": "audio-addressing",
-    "title": "Addressing Gettysburg",
+    "id": "yt-abc",
+    "title": "ABC News (Australia)",
+    "category": "youtube",
+    "url": "https://www.youtube.com/feeds/videos.xml?channel_id=UCVgO39Bk5sMo66-6o6Spn6Q",
+    "siteUrl": "https://www.youtube.com/@ABCNewsAustralia",
+    "enabled": true
+  },
+  {
+    "id": "pod-otm",
+    "title": "On the Media",
     "category": "audio",
-    "url": "https://addressinggettysburg.libsyn.com/rss",
-    "siteUrl": "https://addressinggettysburg.com",
+    "url": "https://feeds.simplecast.com/o4jAFXaw",
+    "siteUrl": "https://www.wnycstudios.org/podcasts/otm",
+    "enabled": true
+  },
+  {
+    "id": "pod-feds",
+    "title": "Talking Feds",
+    "category": "audio",
+    "url": "https://feeds.megaphone.fm/GEMINIMEDIA2127678588",
+    "siteUrl": "https://www.talkingfeds.com",
+    "enabled": true
+  },
+  {
+    "id": "pod-debate",
+    "title": "Open to Debate",
+    "category": "audio",
+    "url": "https://feeds.megaphone.fm/PNP1207584390",
+    "siteUrl": "https://opentodebate.org",
+    "enabled": true
+  },
+  {
+    "id": "text-brooks",
+    "title": "David Brooks (NYT)",
+    "category": "text",
+    "url": "https://www.nytimes.com/svc/collections/v1/publish/www.nytimes.com/column/david-brooks/rss.xml",
+    "siteUrl": "https://www.nytimes.com/column/david-brooks",
     "enabled": true
   }
 ]
