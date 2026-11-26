@@ -1,6 +1,7 @@
 import express from 'express';
 import fs from 'node:fs';
 import path from 'node:path';
+import { Readable } from 'node:stream';
 import { fileURLToPath } from 'node:url';
 import { aggregateFeeds } from './rss.js';
 import { createAgentRouter } from './agentApi.js';
@@ -132,6 +133,41 @@ app.use(express.json({ limit: '1mb' }));
 // Health check
 app.get('/healthz', (_req, res) => {
   res.json({ ok: true, service: 'gettysburg-beacon' });
+});
+
+// Audio proxy to bypass podcast tracker/adblocker blocks and preserve Range seeking
+app.get('/api/audio-proxy', async (req, res) => {
+  const rawUrl = String(req.query.url || '').trim();
+  if (!/^https?:\/\//i.test(rawUrl)) {
+    return res.status(400).json({ error: 'Invalid audio URL' });
+  }
+  try {
+    const headers = {
+      'User-Agent': 'GettysburgBeacon/1.0 (+https://gettysburgbeacon.com)',
+    };
+    if (req.headers.range) {
+      headers.Range = req.headers.range;
+    }
+    const upstream = await fetch(rawUrl, { headers, redirect: 'follow' });
+    if (!upstream.ok && upstream.status !== 206) {
+      return res.status(upstream.status).end();
+    }
+    res.status(upstream.status);
+    for (const h of ['content-type', 'content-length', 'content-range', 'accept-ranges']) {
+      const val = upstream.headers.get(h);
+      if (val) res.setHeader(h, val);
+    }
+    if (!upstream.headers.get('content-type')) {
+      res.setHeader('Content-Type', 'audio/mpeg');
+    }
+    if (upstream.body) {
+      Readable.fromWeb(upstream.body).pipe(res);
+    } else {
+      res.end();
+    }
+  } catch (err) {
+    res.status(502).json({ error: err.message });
+  }
 });
 
 // Public API: aggregated RSS feeds

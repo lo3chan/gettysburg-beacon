@@ -179,9 +179,9 @@ function renderPanel(panel, items, expanded = false) {
                 <div class="flex flex-col items-end flex-shrink-0">
                   ${
                     item.audioUrl
-                      ? `<button type="button" data-audio-toggle="${esc(item.id)}"
+                      ? `<button type="button" data-audio-toggle="${esc(item.id)}" data-audio-url="${esc(item.audioUrl)}"
                           class="border border-[#221c17] px-2 py-0.5 text-xs font-mono font-bold flex items-center space-x-1 bg-[#f9f5e6]/80 hover:bg-white shadow-sm cursor-pointer">
-                          <span>${isPlaying ? '&#9632;' : '&#9654;'}</span>
+                          <span data-audio-icon>&#9654;</span>
                           <span>${esc(item.duration || 'PLAY')}</span>
                         </button>`
                       : `<a href="${esc(item.url)}" target="_blank" rel="noopener noreferrer"
@@ -192,11 +192,7 @@ function renderPanel(panel, items, expanded = false) {
                   <span class="text-[10px] text-[#4d4235] mt-1">${esc(formatStamp(item.publishedAt))}</span>
                 </div>
               </div>
-              ${
-                isPlaying && item.audioUrl
-                  ? `<audio controls autoplay class="w-full h-8 mt-1" src="${esc(item.audioUrl)}"></audio>`
-                  : ''
-              }
+              <div data-audio-slot="${esc(item.id)}"></div>
             </article>`;
           })
           .join('')}
@@ -504,8 +500,29 @@ document.addEventListener('click', (e) => {
   const audioBtn = e.target.closest('[data-audio-toggle]');
   if (audioBtn) {
     const id = audioBtn.dataset.audioToggle;
-    state.activeAudioId = state.activeAudioId === id ? null : id;
-    render();
+    const rawUrl = audioBtn.dataset.audioUrl;
+    const slot = audioBtn.closest('article')?.querySelector('[data-audio-slot]');
+    const icon = audioBtn.querySelector('[data-audio-icon]');
+    if (!slot || !rawUrl) return;
+
+    const wasActive = state.activeAudioId === id;
+    // Clear any other active player
+    document.querySelectorAll('[data-audio-slot]').forEach((s) => {
+      s.innerHTML = '';
+    });
+    document.querySelectorAll('[data-audio-icon]').forEach((ic) => {
+      ic.innerHTML = '&#9654;';
+    });
+
+    if (wasActive) {
+      state.activeAudioId = null;
+    } else {
+      state.activeAudioId = id;
+      if (icon) icon.innerHTML = '&#9632;';
+      const proxySrc = `/api/audio-proxy?url=${encodeURIComponent(rawUrl)}`;
+      slot.innerHTML = `<audio controls autoplay preload="metadata" class="w-full h-8 mt-1" src="${esc(proxySrc)}"></audio>`;
+    }
+    requestAnimationFrame(layoutMasonry);
   }
 });
 

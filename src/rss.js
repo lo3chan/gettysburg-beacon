@@ -23,16 +23,22 @@ function textOf(val) {
   return '';
 }
 
-function stripHtml(html) {
-  return String(html || '')
-    .replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, '$1')
-    .replace(/<[^>]+>/g, ' ')
+function decodeEntities(str) {
+  return String(str || '')
     .replace(/&amp;/g, '&')
     .replace(/&lt;/g, '<')
     .replace(/&gt;/g, '>')
     .replace(/&quot;/g, '"')
-    .replace(/&#39;/g, "'")
-    .replace(/&nbsp;/g, ' ')
+    .replace(/&#39;|&apos;/g, "'")
+    .replace(/&nbsp;/g, ' ');
+}
+
+function stripHtml(html) {
+  return decodeEntities(
+    String(html || '')
+      .replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, '$1')
+      .replace(/<[^>]+>/g, ' ')
+  )
     .replace(/\s+/g, ' ')
     .trim();
 }
@@ -98,7 +104,7 @@ function normalizeRssItem(item, feed) {
   const excerpt = stripHtml(rawDesc).slice(0, 240);
 
   const enclosure = asArray(item.enclosure)[0];
-  const encUrl = enclosure?.['@_url'] || '';
+  const encUrl = decodeEntities(enclosure?.['@_url'] || '');
   const encType = enclosure?.['@_type'] || '';
   const isAudio = feed.category === 'audio' || encType.startsWith('audio/');
   const duration = formatDuration(textOf(item['itunes:duration']));
