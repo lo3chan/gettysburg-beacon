@@ -5,6 +5,7 @@ const parser = new XMLParser({
   attributeNamePrefix: '@_',
   textNodeName: '#text',
   trimValues: true,
+  processEntities: false,
 });
 
 function asArray(val) {
