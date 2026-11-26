@@ -1,6 +1,7 @@
 const state = {
   tab: 'feed',
   feedFilter: 'all',
+  expandedPanelId: null,
   dispatchFilter: 'all',
   feeds: { items: [], sources: [], updatedAt: null },
   layout: { panels: [] },
@@ -229,15 +230,19 @@ function renderPanel(panel, items, expanded = false) {
       </div>`;
   }
 
+  const isExpanded = state.expandedPanelId === panel.id;
   return `
     <section class="beacon-panel relative pb-5 ${expanded ? '' : panelSpanClass(panel.colSpan)}">
-      <div class="inline-flex items-center space-x-2 tex-parchment border-[1.5px] border-[#2a231b] px-2.5 py-1 text-xs font-mono font-bold ml-1 relative z-10 paper-tab-shadow">
+      <button type="button" data-expand-panel="${esc(panel.id)}"
+        title="${isExpanded ? 'Collapse back to all pools' : 'Expand pool to full page'}"
+        class="inline-flex items-center space-x-2 tex-parchment border-[1.5px] border-[#2a231b] px-2.5 py-1 text-xs font-mono font-bold ml-1 relative z-10 paper-tab-shadow cursor-pointer hover:brightness-95 transition">
         <span class="tracking-wide">${esc(panel.title)}</span>
         <span class="${badgeCls} text-[10px] font-sans font-bold px-1.5 py-0.2 rounded-sm border uppercase">
           ${esc(panel.badge)}
         </span>
         <span class="border border-[#2a231b] px-1 py-0 text-[10px]">${items.length}</span>
-      </div>
+        <span class="text-[10px] text-[#4d4235] pl-0.5">${isExpanded ? '&larr; ALL' : '&#x2922;'}</span>
+      </button>
       <div class="${backingClass} border p-3.5 -mt-2.5 paper-shadow rounded-sm relative text-[#201c17]">
         ${bodyHtml}
       </div>
@@ -262,7 +267,15 @@ function renderFeedTab() {
   };
 
   let html = '';
-  if (state.feedFilter === 'all') {
+  if (state.expandedPanelId) {
+    const target = panels.find((p) => p.id === state.expandedPanelId);
+    if (target) {
+      html = `<div class="space-y-5">${renderPanel(target, itemsForPanel(target), true)}</div>`;
+    } else {
+      state.expandedPanelId = null;
+    }
+  }
+  if (!html && state.feedFilter === 'all') {
     const rendered = panels.map((p) => renderPanel(p, itemsForPanel(p), false)).filter(Boolean);
     if (rendered.length) {
       html = `
@@ -469,7 +482,17 @@ document.addEventListener('click', (e) => {
   const feedBtn = e.target.closest('[data-feed-filter]');
   if (feedBtn) {
     state.feedFilter = feedBtn.dataset.feedFilter;
+    state.expandedPanelId = null;
     render();
+    return;
+  }
+
+  const expandBtn = e.target.closest('[data-expand-panel]');
+  if (expandBtn) {
+    const pid = expandBtn.dataset.expandPanel;
+    state.expandedPanelId = state.expandedPanelId === pid ? null : pid;
+    render();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
     return;
   }
 

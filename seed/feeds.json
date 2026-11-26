@@ -40,6 +40,14 @@
     "enabled": true
   },
   {
+    "id": "yt-abc-indepth",
+    "title": "ABC News In-depth",
+    "category": "youtube",
+    "url": "https://www.youtube.com/feeds/videos.xml?channel_id=UCxcrzzhQDj5zKJbXfIscCtg",
+    "siteUrl": "https://www.youtube.com/c/ABCNewsIndepth",
+    "enabled": true
+  },
+  {
     "id": "pod-otm",
     "title": "On the Media",
     "category": "audio",

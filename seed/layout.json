@@ -46,7 +46,7 @@
       "order": 3,
       "colSpan": 1,
       "windowSize": 6,
-      "feedIds": ["yt-dw", "yt-rti", "yt-f24", "yt-abc"]
+      "feedIds": ["yt-dw", "yt-rti", "yt-f24", "yt-abc", "yt-abc-indepth"]
     }
   ]
 }
