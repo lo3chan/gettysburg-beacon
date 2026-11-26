@@ -257,7 +257,16 @@ app.post('/api/admin/refresh', requireAdmin, async (_req, res) => {
   res.json({ ok: true, updatedAt: data.updatedAt, count: data.items.length });
 });
 
-app.use(express.static(PUBLIC_DIR, { extensions: ['html'] }));
+app.use(
+  express.static(PUBLIC_DIR, {
+    extensions: ['html'],
+    setHeaders(res, filePath) {
+      if (filePath.endsWith('.html') || filePath.endsWith('.js')) {
+        res.setHeader('Cache-Control', 'no-cache');
+      }
+    },
+  })
+);
 
 app.get('*', (_req, res) => {
   res.sendFile(path.join(PUBLIC_DIR, 'index.html'));

@@ -98,7 +98,7 @@ function renderYouTubeSection(items, expanded = false) {
   if (!items.length) return '';
   const gridClass = expanded
     ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pt-1'
-    : 'grid grid-cols-1 md:grid-cols-2 gap-4 pt-1';
+    : 'space-y-4 pt-1';
 
   return `
     <section class="relative" data-purpose="youtube-feed-group">
@@ -277,14 +277,10 @@ function renderFeedTab() {
     const textHtml = renderTextSection(text, false);
     if (ytHtml || audioHtml || textHtml) {
       html = `
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-5 items-start">
-          <div class="lg:col-span-7 space-y-4">
-            ${ytHtml}
-          </div>
-          <div class="lg:col-span-5 space-y-4">
-            ${audioHtml}
-            ${textHtml}
-          </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 items-start">
+          ${ytHtml ? `<div>${ytHtml}</div>` : ''}
+          ${audioHtml ? `<div>${audioHtml}</div>` : ''}
+          ${textHtml ? `<div>${textHtml}</div>` : ''}
         </div>
       `;
     }
@@ -335,7 +331,7 @@ function renderDispatchTab() {
         <span class="border border-[#2a231b] px-1 py-0 text-[10px]">${items.length}</span>
       </div>
       <div class="tex-lined border border-[#d3caa8] p-3.5 md:p-5 -mt-2.5 paper-shadow rounded-sm relative text-[#201c17]">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-5 pt-1 font-mono text-xs">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 pt-1 font-mono text-xs">
           ${
             items.length === 0
               ? '<p class="text-center text-[#4d4235] py-4 md:col-span-2">No dispatches match this filter.</p>'
