@@ -1,0 +1,37 @@
+{
+  "name": "Gettysburg Beacon",
+  "owner": "Lo3chan",
+  "role": "Independent Research, Local History & Self-Hosted Web",
+  "location": "Gettysburg, Pennsylvania",
+  "tagline": "Field dispatches, curated RSS signals, and open-web tools from Adams County.",
+  "bio": "Gettysburg Beacon is a personal hub, RSS aggregator, and digital calling card. It gathers video, audio, and written dispatches alongside original field notes and self-hosted community tools.",
+  "email": "hello@gettysburgbeacon.com",
+  "website": "https://gettysburgbeacon.com",
+  "links": [
+    {
+      "label": "Wiki & Notes",
+      "url": "https://wiki.gettysburgbeacon.com",
+      "note": "Public knowledgebase"
+    },
+    {
+      "label": "RSS Feed",
+      "url": "/rss.xml",
+      "note": "Subscribe to Dispatches"
+    },
+    {
+      "label": "OPML Bundle",
+      "url": "/opml.xml",
+      "note": "Import all followed feeds"
+    },
+    {
+      "label": "GitHub",
+      "url": "https://github.com/lo3chan",
+      "note": "Open-source projects"
+    }
+  ],
+  "colophon": [
+    "Served from jelly via Cloudflare Tunnel",
+    "Zero-tracker static + Node.js RSS aggregator",
+    "Tactile corkboard & parchment UI"
+  ]
+}

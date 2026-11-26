@@ -1,0 +1,32 @@
+[
+  {
+    "id": "disp-001",
+    "kind": "review",
+    "title": "Field Notes on Seminary Ridge Dusk Walk",
+    "body": "Worth queuing up the latest Addressing Gettysburg episode before walking the ridge trail at golden hour. The discussion on artillery sightlines from the Lutheran Seminary cupola makes the terrain click immediately.",
+    "createdAt": "2026-11-25T19:30:00-05:00",
+    "tags": ["audio", "seminary-ridge", "terrain"],
+    "refItem": {
+      "source": "Addressing Gettysburg",
+      "title": "Seminary Ridge at Dusk",
+      "url": "https://addressinggettysburg.com",
+      "category": "audio"
+    }
+  },
+  {
+    "id": "disp-002",
+    "kind": "post",
+    "title": "Why a Corkboard & Paper RSS Reader?",
+    "body": "Algorithmic timelines flatten everything into infinite scroll. Gettysburg Beacon is a quiet, pinned corkboard for local history, field audio, video dispatches, and long-form reading—backed by plain RSS, OPML, and open web standards.\n\nNo tracking pixels, no engagement bait. Just signal pinned to the board.",
+    "createdAt": "2026-11-24T14:15:00-05:00",
+    "tags": ["meta", "rss", "indieweb"]
+  },
+  {
+    "id": "disp-003",
+    "kind": "micro",
+    "title": "Early Frost on Little Round Top",
+    "body": "Clear visibility across the Valley of Death this morning before 08:00. With the leaves down, the boulder lines along Houck's Ridge are completely legible from the summit.",
+    "createdAt": "2026-11-22T08:45:00-05:00",
+    "tags": ["field-note", "little-round-top"]
+  }
+]

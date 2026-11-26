@@ -1,0 +1,42 @@
+[
+  {
+    "id": "yt-cwdd",
+    "title": "Civil War Digital Digest",
+    "category": "youtube",
+    "url": "https://www.youtube.com/feeds/videos.xml?channel_id=UCR419HGD33ONzukp3c-WNPA",
+    "siteUrl": "https://www.youtube.com/@CivilWarDigitalDigest",
+    "enabled": true
+  },
+  {
+    "id": "yt-abt",
+    "title": "American Battlefield Trust",
+    "category": "youtube",
+    "url": "https://www.youtube.com/feeds/videos.xml?channel_id=UCUfsbWIraXIl7a6HKSJINUg",
+    "siteUrl": "https://www.youtube.com/@AmericanBattlefieldTrust",
+    "enabled": true
+  },
+  {
+    "id": "text-ecw",
+    "title": "Emerging Civil War",
+    "category": "text",
+    "url": "https://emergingcivilwar.com/feed/",
+    "siteUrl": "https://emergingcivilwar.com",
+    "enabled": true
+  },
+  {
+    "id": "text-cwm",
+    "title": "Civil War Monitor",
+    "category": "text",
+    "url": "https://www.civilwarmonitor.com/feed/",
+    "siteUrl": "https://www.civilwarmonitor.com",
+    "enabled": true
+  },
+  {
+    "id": "audio-addressing",
+    "title": "Addressing Gettysburg",
+    "category": "audio",
+    "url": "https://addressinggettysburg.libsyn.com/rss",
+    "siteUrl": "https://addressinggettysburg.com",
+    "enabled": true
+  }
+]
