@@ -97,34 +97,18 @@
   </style>
 </head>
 <body class="min-h-screen flex justify-center selection:bg-amber-200">
-  <div class="w-full max-w-md md:max-w-[1440px] min-h-screen relative flex flex-col pb-24 md:pb-10 md:px-6">
+  <div class="w-full max-w-md md:max-w-[1440px] min-h-screen relative flex flex-col pb-10 md:px-6">
     <!-- Header Banner -->
     <header class="px-3 md:px-0 pt-3 md:pt-5" data-purpose="parchment-header-banner">
-      <div class="relative tex-parchment px-3.5 md:px-6 py-2.5 md:py-3.5 rounded-sm paper-shadow border border-[#d6c7ab] flex flex-col md:flex-row items-center justify-center md:justify-between gap-2">
+      <div class="relative tex-parchment px-3.5 md:px-6 py-2.5 md:py-3.5 rounded-sm paper-shadow border border-[#d6c7ab] flex items-center justify-center md:justify-between gap-2">
         <div class="flex items-center gap-3">
           <h1 class="font-headline tracking-wider text-2xl sm:text-3xl font-bold uppercase text-[#1e1c19] leading-none pt-0.5">
             Gettysburg Beacon
           </h1>
           <span class="hidden lg:inline-block font-mono text-[11px] text-[#4d4235] border-l border-[#c2b296] pl-3">
-            RSS Corkboard &bull; Field Dispatches &bull; Calling Card
+            Public RSS Corkboard
           </span>
         </div>
-
-        <!-- Desktop Top Navigation Tabs -->
-        <nav class="hidden md:flex items-center gap-2 font-mono text-xs font-bold" aria-label="Desktop Primary">
-          <button type="button" data-tab="feed" class="desktop-nav-tab nav-tab border-[1.5px] border-[#221c16] px-3 py-1 rounded-[1px] shadow-sm hover:bg-[#1e1c19]/10 transition-colors cursor-pointer">
-            Feed
-          </button>
-          <button type="button" data-tab="dispatch" class="desktop-nav-tab nav-tab border-[1.5px] border-[#221c16] px-3 py-1 rounded-[1px] shadow-sm hover:bg-[#1e1c19]/10 transition-colors cursor-pointer">
-            Dispatch
-          </button>
-          <button type="button" data-tab="about" class="desktop-nav-tab nav-tab border-[1.5px] border-[#221c16] px-3 py-1 rounded-[1px] shadow-sm hover:bg-[#1e1c19]/10 transition-colors cursor-pointer">
-            About
-          </button>
-          <span class="h-4 w-px bg-[#c2b296] mx-1"></span>
-          <a href="/opml.xml" class="border border-[#2a231b] px-2 py-1 text-[10px] hover:bg-white/70">OPML</a>
-          <a href="/rss.xml" class="border border-[#2a231b] px-2 py-1 text-[10px] hover:bg-white/70">RSS</a>
-        </nav>
       </div>
     </header>
 
@@ -137,46 +121,6 @@
         Loading dispatches from the board...
       </div>
     </main>
-
-    <!-- Mobile Bottom Navigation Dock -->
-    <nav class="md:hidden fixed bottom-0 inset-x-0 max-w-md mx-auto bg-[#1b1916]/95 backdrop-blur-sm border-t border-[#312c26] text-[#b0a597] px-2 pt-2 pb-3 z-40" data-purpose="bottom-nav" aria-label="Primary">
-      <div class="grid grid-cols-3 text-center items-center">
-        <!-- Tab 1: Feed -->
-        <button type="button" data-tab="feed" class="mobile-nav-tab nav-tab flex flex-col items-center hover:text-white transition-colors relative py-0.5">
-          <div class="nav-glow hidden absolute -top-1 w-10 h-8 bg-white/10 rounded-full blur-[2px] -z-10"></div>
-          <svg class="w-5 h-5 mb-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-            <path d="M4 11a9 9 0 0 1 9 9"></path>
-            <path d="M4 4a16 16 0 0 1 16 16"></path>
-            <circle cx="5" cy="19" fill="currentColor" r="1"></circle>
-          </svg>
-          <span class="text-[10px] font-mono tracking-tight">Feed</span>
-        </button>
-
-        <!-- Tab 2: Dispatch -->
-        <button type="button" data-tab="dispatch" class="mobile-nav-tab nav-tab flex flex-col items-center hover:text-white transition-colors relative py-0.5">
-          <div class="nav-glow hidden absolute -top-1 w-10 h-8 bg-white/10 rounded-full blur-[2px] -z-10"></div>
-          <svg class="w-5 h-5 mb-1" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
-            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-            <line x1="8" x2="16" y1="9" y2="9"></line>
-            <line x1="8" x2="14" y1="13" y2="13"></line>
-          </svg>
-          <span class="text-[10px] font-mono tracking-tight">Dispatch</span>
-        </button>
-
-        <!-- Tab 3: About -->
-        <button type="button" data-tab="about" class="mobile-nav-tab nav-tab flex flex-col items-center hover:text-white transition-colors relative py-0.5">
-          <div class="nav-glow hidden absolute -top-1 w-10 h-8 bg-white/10 rounded-full blur-[2px] -z-10"></div>
-          <svg class="w-5 h-5 mb-1" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
-            <rect x="3" y="5" width="18" height="14" rx="1.5"></rect>
-            <circle cx="8.5" cy="11.5" r="2"></circle>
-            <path d="M5.5 16c.6-1.4 1.8-2 3-2s2.4.6 3 2"></path>
-            <line x1="14" y1="10" x2="18.5" y2="10"></line>
-            <line x1="14" y1="13.5" x2="18.5" y2="13.5"></line>
-          </svg>
-          <span class="text-[10px] font-mono tracking-tight">About</span>
-        </button>
-      </div>
-    </nav>
   </div>
 
   <script type="module" src="/app.js"></script>

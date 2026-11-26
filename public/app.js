@@ -285,12 +285,6 @@ function renderFeedTab() {
       </div>`;
   }
 
-  html += `
-    <div class="md:hidden pt-1 pb-2 flex items-center justify-center gap-2 font-mono text-[10px]">
-      <a href="/opml.xml" class="tex-parchment border border-[#2a231b] px-2 py-0.5 paper-tab-shadow hover:bg-white">OPML</a>
-      <a href="/rss.xml" class="tex-parchment border border-[#2a231b] px-2 py-0.5 paper-tab-shadow hover:bg-white">DISPATCH RSS</a>
-    </div>
-  `;
   return html;
 }
 
@@ -527,10 +521,7 @@ document.addEventListener('click', (e) => {
 });
 
 async function init() {
-  const hash = window.location.hash.replace('#', '');
-  if (['feed', 'dispatch', 'about'].includes(hash)) {
-    state.tab = hash;
-  }
+  state.tab = 'feed';
   updateNavUI();
   renderSubnav();
 
