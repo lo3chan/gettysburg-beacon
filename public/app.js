@@ -130,28 +130,17 @@ function renderPanel(panel, items, expanded = false) {
             (item) => `
           <article class="relative">
             <div class="w-full aspect-video rounded-sm overflow-hidden border border-black/20 shadow-lg bg-[#0a0a0c] relative">
-              <div class="relative w-full h-full cursor-pointer group overflow-hidden" data-yt-id="${esc(item.videoId)}" data-yt-url="${esc(item.url)}">
-                ${
-                  item.thumbnailUrl
-                    ? `<img src="${esc(item.thumbnailUrl)}" alt="${esc(item.title)}" loading="lazy" class="object-cover w-full h-full transform transition-transform duration-500 group-hover:scale-105 opacity-90" />`
-                    : ''
-                }
-                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-black/30 pointer-events-none"></div>
-                <div class="absolute inset-0 flex items-center justify-center">
-                  <div class="w-12 h-12 rounded-[2px] bg-black/60 backdrop-blur-md border border-white/25 text-white flex items-center justify-center shadow-lg group-hover:bg-amber-400 group-hover:text-black group-hover:border-amber-300 transition-all duration-300">
-                    <svg class="w-4 h-4 fill-current ml-0.5" viewBox="0 0 24 24"><polygon points="6 3 20 12 6 21"></polygon></svg>
-                  </div>
-                </div>
-                <div class="absolute inset-x-2 bottom-2 px-2.5 py-1.5 rounded-[2px] bg-black/75 backdrop-blur-md border border-white/10 flex items-center space-x-2.5">
-                  <span class="text-white flex-shrink-0"><svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><polygon points="6 3 20 12 6 21"></polygon></svg></span>
-                  <div class="flex-1 bg-white/20 h-[2px] relative flex items-center">
-                    <div class="w-1/4 bg-white h-full relative">
-                      <div class="absolute -right-1 -top-[3px] w-2 h-2 bg-white rounded-[1px] shadow-sm"></div>
-                    </div>
-                  </div>
-                  <span class="text-[10px] font-mono font-bold text-white/90 tracking-wider tabular-nums flex-shrink-0">YT</span>
-                </div>
-              </div>
+              ${
+                item.videoId
+                  ? `<iframe
+                      src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(item.videoId)}"
+                      title="${esc(item.title)}"
+                      loading="lazy"
+                      class="w-full h-full border-0"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                      allowfullscreen></iframe>`
+                  : `<a href="${esc(item.url)}" target="_blank" rel="noopener noreferrer" class="flex items-center justify-center w-full h-full text-white font-mono text-xs hover:underline">Open Video &rarr;</a>`
+              }
             </div>
             <div class="mt-1.5 flex items-baseline justify-between gap-2 font-mono text-[11px] leading-snug text-[#1e1c19]">
               <a href="${esc(item.url)}" target="_blank" rel="noopener noreferrer" class="hover:underline">
