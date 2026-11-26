@@ -245,7 +245,7 @@ function renderPanel(panel, items, expanded = false) {
   }
 
   return `
-    <section class="relative ${expanded ? '' : panelSpanClass(panel.colSpan)}">
+    <section class="beacon-panel relative pb-5 ${expanded ? '' : panelSpanClass(panel.colSpan)}">
       <div class="inline-flex items-center space-x-2 tex-parchment border-[1.5px] border-[#2a231b] px-2.5 py-1 text-xs font-mono font-bold ml-1 relative z-10 paper-tab-shadow">
         <span class="tracking-wide">${esc(panel.title)}</span>
         <span class="${badgeCls} text-[10px] font-sans font-bold px-1.5 py-0.2 rounded-sm border uppercase">
@@ -281,7 +281,7 @@ function renderFeedTab() {
     const rendered = panels.map((p) => renderPanel(p, itemsForPanel(p), false)).filter(Boolean);
     if (rendered.length) {
       html = `
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 items-start">
+        <div id="masonry-board" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 grid-flow-dense gap-x-5 items-start" style="grid-auto-rows: 8px;">
           ${rendered.join('')}
         </div>
       `;
@@ -436,6 +436,37 @@ function renderAboutTab() {
   `;
 }
 
+let masonryObserver = null;
+
+function layoutMasonry() {
+  const board = document.getElementById('masonry-board');
+  if (!board) return;
+  const isMultiCol = window.innerWidth >= 768;
+  board.querySelectorAll('.beacon-panel').forEach((panel) => {
+    if (!isMultiCol) {
+      panel.style.gridRowEnd = '';
+      return;
+    }
+    const h = panel.getBoundingClientRect().height;
+    const span = Math.max(1, Math.ceil(h / 8));
+    panel.style.gridRowEnd = `span ${span}`;
+  });
+}
+
+function observeMasonry() {
+  if (masonryObserver) {
+    masonryObserver.disconnect();
+    masonryObserver = null;
+  }
+  const board = document.getElementById('masonry-board');
+  if (!board) return;
+  masonryObserver = new ResizeObserver(() => layoutMasonry());
+  board.querySelectorAll('.beacon-panel').forEach((p) => masonryObserver.observe(p));
+  layoutMasonry();
+}
+
+window.addEventListener('resize', layoutMasonry);
+
 function render() {
   updateNavUI();
   renderSubnav();
@@ -443,6 +474,7 @@ function render() {
   if (state.tab === 'feed') main.innerHTML = renderFeedTab();
   else if (state.tab === 'dispatch') main.innerHTML = renderDispatchTab();
   else main.innerHTML = renderAboutTab();
+  requestAnimationFrame(observeMasonry);
 }
 
 document.addEventListener('click', (e) => {
