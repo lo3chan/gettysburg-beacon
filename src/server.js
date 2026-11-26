@@ -3,6 +3,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { aggregateFeeds } from './rss.js';
+import { createAgentRouter } from './agentApi.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -232,6 +233,9 @@ app.post('/api/editor/refresh', requireEditorHost, async (_req, res) => {
   const data = await getAggregatedFeeds(true);
   res.json({ ok: true, updatedAt: data.updatedAt, feedStatus: data.status, count: data.items.length });
 });
+
+// Agent API (gated to edit.gettysburgbeacon.com / localhost)
+app.use('/api/agent', requireEditorHost, createAgentRouter({ readJson, writeJson, getAggregatedFeeds }));
 
 // Public RSS 2.0 feed of Dispatches
 app.get('/rss.xml', (_req, res) => {
