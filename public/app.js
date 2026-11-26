@@ -26,12 +26,17 @@ function formatStamp(iso) {
 }
 
 function updateNavUI() {
-  document.querySelectorAll('.nav-tab').forEach((btn) => {
+  document.querySelectorAll('.mobile-nav-tab').forEach((btn) => {
     const isActive = btn.dataset.tab === state.tab;
     btn.classList.toggle('text-[#e9ded0]', isActive);
     btn.classList.toggle('font-bold', isActive);
     const glow = btn.querySelector('.nav-glow');
     if (glow) glow.classList.toggle('hidden', !isActive);
+  });
+
+  document.querySelectorAll('.desktop-nav-tab').forEach((btn) => {
+    const isActive = btn.dataset.tab === state.tab;
+    btn.classList.toggle('active', isActive);
   });
 }
 
@@ -45,12 +50,12 @@ function renderSubnav() {
       { id: 'audio', label: 'Audio' },
     ];
     nav.innerHTML = `
-      <div class="grid grid-cols-4 gap-1.5 font-mono text-center text-sm font-semibold">
+      <div class="grid grid-cols-4 md:inline-grid md:grid-cols-4 gap-1.5 md:gap-2 font-mono text-center text-sm font-semibold md:w-auto">
         ${tabs
           .map(
             (t) => `
           <button type="button" data-feed-filter="${t.id}"
-            class="filter-btn tex-kraft border-[1.5px] border-[#221c16] py-1 rounded-[1px] shadow-sm cursor-pointer ${
+            class="filter-btn tex-kraft border-[1.5px] border-[#221c16] py-1 md:px-5 rounded-[1px] shadow-sm cursor-pointer ${
               state.feedFilter === t.id ? 'active' : ''
             }">
             ${t.label}
@@ -68,12 +73,12 @@ function renderSubnav() {
       { id: 'micro', label: 'Notes' },
     ];
     nav.innerHTML = `
-      <div class="grid grid-cols-4 gap-1.5 font-mono text-center text-sm font-semibold">
+      <div class="grid grid-cols-4 md:inline-grid md:grid-cols-4 gap-1.5 md:gap-2 font-mono text-center text-sm font-semibold md:w-auto">
         ${tabs
           .map(
             (t) => `
           <button type="button" data-dispatch-filter="${t.id}"
-            class="filter-btn tex-kraft border-[1.5px] border-[#221c16] py-1 rounded-[1px] shadow-sm cursor-pointer ${
+            class="filter-btn tex-kraft border-[1.5px] border-[#221c16] py-1 md:px-5 rounded-[1px] shadow-sm cursor-pointer ${
               state.dispatchFilter === t.id ? 'active' : ''
             }">
             ${t.label}
@@ -89,8 +94,12 @@ function renderSubnav() {
   }
 }
 
-function renderYouTubeSection(items) {
+function renderYouTubeSection(items, expanded = false) {
   if (!items.length) return '';
+  const gridClass = expanded
+    ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pt-1'
+    : 'grid grid-cols-1 md:grid-cols-2 gap-4 pt-1';
+
   return `
     <section class="relative" data-purpose="youtube-feed-group">
       <div class="inline-flex items-center space-x-2 tex-parchment border-[1.5px] border-[#2a231b] px-2.5 py-1 text-xs font-mono font-bold ml-1 relative z-10 paper-tab-shadow">
@@ -100,8 +109,8 @@ function renderYouTubeSection(items) {
         </span>
         <span class="border border-[#2a231b] px-1 py-0 text-[10px]">${items.length}</span>
       </div>
-      <div class="tex-parchment border border-[#a48663] p-3 -mt-2.5 paper-shadow rounded-sm relative">
-        <div class="space-y-4 pt-1">
+      <div class="tex-parchment border border-[#a48663] p-3 md:p-4 -mt-2.5 paper-shadow rounded-sm relative">
+        <div class="${gridClass}">
           ${items
             .map(
               (item) => `
@@ -145,10 +154,14 @@ function renderYouTubeSection(items) {
   `;
 }
 
-function renderAudioSection(items) {
+function renderAudioSection(items, expanded = false) {
   if (!items.length) return '';
+  const listClass = expanded
+    ? 'grid grid-cols-1 md:grid-cols-2 gap-4 pt-1 font-mono text-xs'
+    : 'space-y-3.5 pt-1 font-mono text-xs';
+
   return `
-    <section class="relative pt-1" data-purpose="audio-podcasts-section">
+    <section class="relative pt-1 lg:pt-0" data-purpose="audio-podcasts-section">
       <div class="inline-flex items-center space-x-2 tex-parchment border-[1.5px] border-[#2a231b] px-2.5 py-1 text-xs font-mono font-bold ml-1 relative z-10 paper-tab-shadow">
         <span class="tracking-wide">AUDIO</span>
         <span class="bg-[#c2eecf] text-[#185e33] text-[10px] font-sans font-bold px-1.5 py-0.2 rounded-sm border border-[#a2d8b1] uppercase">
@@ -157,13 +170,13 @@ function renderAudioSection(items) {
         <span class="border border-[#2a231b] px-1 py-0 text-[10px]">${items.length}</span>
       </div>
       <div class="tex-lined border border-[#d3caa8] p-3.5 -mt-2.5 paper-shadow rounded-sm relative text-[#201c17]">
-        <div class="space-y-3.5 pt-1 font-mono text-xs">
+        <div class="${listClass}">
           ${items
             .map((item, idx) => {
               const isPlaying = state.activeAudioId === item.id;
               return `
-              ${idx > 0 ? '<div class="border-b border-[#cfc8b0]/80"></div>' : ''}
-              <article class="space-y-2">
+              ${!expanded && idx > 0 ? '<div class="border-b border-[#cfc8b0]/80"></div>' : ''}
+              <article class="space-y-2 ${expanded ? 'border-b border-[#cfc8b0]/70 pb-3' : ''}">
                 <div class="flex items-start justify-between gap-2">
                   <div class="flex items-start space-x-2 min-w-0">
                     <svg class="w-5 h-5 mt-0.5 flex-shrink-0 text-[#251e17]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -208,8 +221,12 @@ function renderAudioSection(items) {
   `;
 }
 
-function renderTextSection(items) {
+function renderTextSection(items, expanded = false) {
   if (!items.length) return '';
+  const listClass = expanded
+    ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pt-1 font-mono text-xs'
+    : 'space-y-3.5 pt-1 font-mono text-xs';
+
   return `
     <section class="relative pt-1" data-purpose="text-articles-section">
       <div class="inline-flex items-center space-x-2 tex-parchment border-[1.5px] border-[#2a231b] px-2.5 py-1 text-xs font-mono font-bold ml-1 relative z-10 paper-tab-shadow">
@@ -220,12 +237,12 @@ function renderTextSection(items) {
         <span class="border border-[#2a231b] px-1 py-0 text-[10px]">${items.length}</span>
       </div>
       <div class="tex-lined border border-[#d3caa8] p-3.5 -mt-2.5 paper-shadow rounded-sm relative text-[#201c17]">
-        <div class="space-y-3.5 pt-1 font-mono text-xs">
+        <div class="${listClass}">
           ${items
             .map(
               (item, idx) => `
-            ${idx > 0 ? '<div class="border-b border-[#cfc8b0]/80"></div>' : ''}
-            <article class="space-y-1">
+            ${!expanded && idx > 0 ? '<div class="border-b border-[#cfc8b0]/80"></div>' : ''}
+            <article class="space-y-1 ${expanded ? 'border-b border-[#cfc8b0]/70 pb-3' : ''}">
               <div class="flex items-baseline justify-between gap-2">
                 <span class="font-bold text-[12px] text-[#251e17]">${esc(item.source)}</span>
                 <span class="text-[10px] text-[#4d4235] flex-shrink-0">${esc(formatStamp(item.publishedAt))}</span>
@@ -254,14 +271,29 @@ function renderFeedTab() {
   const audio = all.filter((i) => i.category === 'audio');
 
   let html = '';
-  if (state.feedFilter === 'all' || state.feedFilter === 'youtube') {
-    html += renderYouTubeSection(yt);
-  }
-  if (state.feedFilter === 'all' || state.feedFilter === 'audio') {
-    html += renderAudioSection(audio);
-  }
-  if (state.feedFilter === 'all' || state.feedFilter === 'text') {
-    html += renderTextSection(text);
+  if (state.feedFilter === 'all') {
+    const ytHtml = renderYouTubeSection(yt, false);
+    const audioHtml = renderAudioSection(audio, false);
+    const textHtml = renderTextSection(text, false);
+    if (ytHtml || audioHtml || textHtml) {
+      html = `
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-5 items-start">
+          <div class="lg:col-span-7 space-y-4">
+            ${ytHtml}
+          </div>
+          <div class="lg:col-span-5 space-y-4">
+            ${audioHtml}
+            ${textHtml}
+          </div>
+        </div>
+      `;
+    }
+  } else if (state.feedFilter === 'youtube') {
+    html = renderYouTubeSection(yt, true);
+  } else if (state.feedFilter === 'audio') {
+    html = renderAudioSection(audio, true);
+  } else if (state.feedFilter === 'text') {
+    html = renderTextSection(text, true);
   }
 
   if (!html) {
@@ -272,7 +304,7 @@ function renderFeedTab() {
   }
 
   html += `
-    <div class="pt-1 pb-2 flex items-center justify-center gap-2 font-mono text-[10px]">
+    <div class="md:hidden pt-1 pb-2 flex items-center justify-center gap-2 font-mono text-[10px]">
       <a href="/opml.xml" class="tex-parchment border border-[#2a231b] px-2 py-0.5 paper-tab-shadow hover:bg-white">OPML</a>
       <a href="/rss.xml" class="tex-parchment border border-[#2a231b] px-2 py-0.5 paper-tab-shadow hover:bg-white">DISPATCH RSS</a>
     </div>
@@ -302,16 +334,15 @@ function renderDispatchTab() {
         <span class="bg-[#f5dfa0] text-[#593e0c] text-[10px] font-sans font-bold px-1.5 py-0.2 rounded-sm border border-[#d6b96c] uppercase">LOG</span>
         <span class="border border-[#2a231b] px-1 py-0 text-[10px]">${items.length}</span>
       </div>
-      <div class="tex-lined border border-[#d3caa8] p-3.5 -mt-2.5 paper-shadow rounded-sm relative text-[#201c17]">
-        <div class="space-y-4 pt-1 font-mono text-xs">
+      <div class="tex-lined border border-[#d3caa8] p-3.5 md:p-5 -mt-2.5 paper-shadow rounded-sm relative text-[#201c17]">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5 pt-1 font-mono text-xs">
           ${
             items.length === 0
-              ? '<p class="text-center text-[#4d4235] py-4">No dispatches match this filter.</p>'
+              ? '<p class="text-center text-[#4d4235] py-4 md:col-span-2">No dispatches match this filter.</p>'
               : items
                   .map(
-                    (d, idx) => `
-                ${idx > 0 ? '<div class="border-b border-[#cfc8b0]/80"></div>' : ''}
-                <article id="dispatch-${esc(d.id)}" class="space-y-2">
+                    (d) => `
+                <article id="dispatch-${esc(d.id)}" class="space-y-2 border-b border-[#cfc8b0]/80 pb-4 md:border md:border-[#cfc8b0] md:p-3.5 md:bg-[#fcf8e3]/50 md:rounded-[1px]">
                   <div class="flex items-center justify-between gap-2">
                     <div class="flex items-center space-x-2">
                       ${kindBadge(d.kind)}
@@ -350,59 +381,61 @@ function renderAboutTab() {
   const a = state.about;
   if (!a) return '';
   return `
-    <section class="relative" data-purpose="business-card-section">
-      <div class="inline-flex items-center space-x-2 tex-parchment border-[1.5px] border-[#2a231b] px-2.5 py-1 text-xs font-mono font-bold ml-1 relative z-10 paper-tab-shadow">
-        <span class="tracking-wide">CALLING CARD</span>
-        <span class="bg-[#c2eecf] text-[#185e33] text-[10px] font-sans font-bold px-1.5 py-0.2 rounded-sm border border-[#a2d8b1] uppercase">ABOUT</span>
-      </div>
-      <div class="tex-parchment border-[1.5px] border-[#2a231b] p-4 -mt-2.5 paper-shadow rounded-sm relative text-[#1e1c19]">
-        <div class="border border-[#b9a88b] p-3.5 space-y-2.5">
-          <div class="flex items-start justify-between gap-2">
-            <div>
-              <h2 class="font-headline text-2xl font-bold uppercase tracking-wider leading-none">${esc(a.name)}</h2>
-              <div class="font-mono text-xs font-bold text-[#4d4235] mt-1">${esc(a.owner)} &bull; ${esc(a.location)}</div>
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-4 md:gap-6 items-start">
+      <section class="relative md:col-span-6" data-purpose="business-card-section">
+        <div class="inline-flex items-center space-x-2 tex-parchment border-[1.5px] border-[#2a231b] px-2.5 py-1 text-xs font-mono font-bold ml-1 relative z-10 paper-tab-shadow">
+          <span class="tracking-wide">CALLING CARD</span>
+          <span class="bg-[#c2eecf] text-[#185e33] text-[10px] font-sans font-bold px-1.5 py-0.2 rounded-sm border border-[#a2d8b1] uppercase">ABOUT</span>
+        </div>
+        <div class="tex-parchment border-[1.5px] border-[#2a231b] p-4 -mt-2.5 paper-shadow rounded-sm relative text-[#1e1c19]">
+          <div class="border border-[#b9a88b] p-3.5 md:p-4 space-y-2.5">
+            <div class="flex items-start justify-between gap-2">
+              <div>
+                <h2 class="font-headline text-2xl font-bold uppercase tracking-wider leading-none">${esc(a.name)}</h2>
+                <div class="font-mono text-xs font-bold text-[#4d4235] mt-1">${esc(a.owner)} &bull; ${esc(a.location)}</div>
+              </div>
             </div>
-          </div>
-          <div class="font-mono text-[11px] font-bold uppercase tracking-wide text-[#5c4a35] border-t border-b border-[#cfc2ab] py-1">
-            ${esc(a.role)}
-          </div>
-          <p class="font-mono text-xs leading-relaxed text-[#251e17]">${esc(a.bio)}</p>
-          <div class="pt-1 flex flex-wrap gap-2 font-mono text-xs">
-            <a href="mailto:${esc(a.email)}" class="tex-kraft border-[1.5px] border-[#221c16] px-2.5 py-1 font-bold shadow-sm hover:brightness-95">
-              ${esc(a.email)}
-            </a>
+            <div class="font-mono text-[11px] font-bold uppercase tracking-wide text-[#5c4a35] border-t border-b border-[#cfc2ab] py-1">
+              ${esc(a.role)}
+            </div>
+            <p class="font-mono text-xs leading-relaxed text-[#251e17]">${esc(a.bio)}</p>
+            <div class="pt-1 flex flex-wrap gap-2 font-mono text-xs">
+              <a href="mailto:${esc(a.email)}" class="tex-kraft border-[1.5px] border-[#221c16] px-2.5 py-1 font-bold shadow-sm hover:brightness-95">
+                ${esc(a.email)}
+              </a>
+            </div>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
 
-    <section class="relative pt-1" data-purpose="links-section">
-      <div class="inline-flex items-center space-x-2 tex-parchment border-[1.5px] border-[#2a231b] px-2.5 py-1 text-xs font-mono font-bold ml-1 relative z-10 paper-tab-shadow">
-        <span class="tracking-wide">INDEX &amp; LINKS</span>
-      </div>
-      <div class="tex-lined border border-[#d3caa8] p-3.5 -mt-2.5 paper-shadow rounded-sm relative text-[#201c17] font-mono text-xs space-y-2.5">
-        ${(a.links || [])
-          .map(
-            (l, idx) => `
-          ${idx > 0 ? '<div class="border-b border-[#cfc8b0]/80"></div>' : ''}
-          <a href="${esc(l.url)}" ${l.url.startsWith('http') ? 'target="_blank" rel="noopener noreferrer"' : ''} class="flex items-center justify-between hover:underline py-0.5">
-            <div>
-              <div class="font-bold text-[13px]">${esc(l.label)}</div>
-              <div class="text-[11px] text-[#4d4235]">${esc(l.note || l.url)}</div>
-            </div>
-            <span class="border border-[#221c17] px-1.5 py-0.5 text-[10px] font-bold bg-[#f9f5e6]/80">OPEN &rarr;</span>
-          </a>`
-          )
-          .join('')}
-        ${
-          a.colophon?.length
-            ? `<div class="border-t border-[#cfc8b0] pt-2.5 mt-2 text-[10px] text-[#4d4235] space-y-0.5">
-                ${a.colophon.map((c) => `<div>&bull; ${esc(c)}</div>`).join('')}
-              </div>`
-            : ''
-        }
-      </div>
-    </section>
+      <section class="relative pt-1 md:pt-0 md:col-span-6" data-purpose="links-section">
+        <div class="inline-flex items-center space-x-2 tex-parchment border-[1.5px] border-[#2a231b] px-2.5 py-1 text-xs font-mono font-bold ml-1 relative z-10 paper-tab-shadow">
+          <span class="tracking-wide">INDEX &amp; LINKS</span>
+        </div>
+        <div class="tex-lined border border-[#d3caa8] p-3.5 md:p-4 -mt-2.5 paper-shadow rounded-sm relative text-[#201c17] font-mono text-xs space-y-2.5">
+          ${(a.links || [])
+            .map(
+              (l, idx) => `
+            ${idx > 0 ? '<div class="border-b border-[#cfc8b0]/80"></div>' : ''}
+            <a href="${esc(l.url)}" ${l.url.startsWith('http') ? 'target="_blank" rel="noopener noreferrer"' : ''} class="flex items-center justify-between hover:underline py-0.5">
+              <div>
+                <div class="font-bold text-[13px]">${esc(l.label)}</div>
+                <div class="text-[11px] text-[#4d4235]">${esc(l.note || l.url)}</div>
+              </div>
+              <span class="border border-[#221c17] px-1.5 py-0.5 text-[10px] font-bold bg-[#f9f5e6]/80">OPEN &rarr;</span>
+            </a>`
+            )
+            .join('')}
+          ${
+            a.colophon?.length
+              ? `<div class="border-t border-[#cfc8b0] pt-2.5 mt-2 text-[10px] text-[#4d4235] space-y-0.5">
+                  ${a.colophon.map((c) => `<div>&bull; ${esc(c)}</div>`).join('')}
+                </div>`
+              : ''
+          }
+        </div>
+      </section>
+    </div>
   `;
 }
 
