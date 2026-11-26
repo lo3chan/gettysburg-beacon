@@ -65,10 +65,10 @@
   },
   {
     "id": "text-brooks",
-    "title": "David Brooks (NYT)",
+    "title": "David Brooks (The Atlantic)",
     "category": "text",
-    "url": "https://www.nytimes.com/svc/collections/v1/publish/www.nytimes.com/column/david-brooks/rss.xml",
-    "siteUrl": "https://www.nytimes.com/column/david-brooks",
+    "url": "https://www.theatlantic.com/feed/author/david-brooks/",
+    "siteUrl": "https://www.theatlantic.com/author/david-brooks/",
     "enabled": true
   }
 ]
