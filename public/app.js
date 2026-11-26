@@ -3,6 +3,7 @@ const state = {
   feedFilter: 'all',
   dispatchFilter: 'all',
   feeds: { items: [], sources: [], updatedAt: null },
+  layout: { panels: [] },
   dispatches: [],
   about: null,
   activeAudioId: null,
@@ -94,171 +95,166 @@ function renderSubnav() {
   }
 }
 
-function renderYouTubeSection(items, expanded = false) {
-  if (!items.length) return '';
-  const gridClass = expanded
-    ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pt-1'
-    : 'space-y-4 pt-1';
-
-  return `
-    <section class="relative" data-purpose="youtube-feed-group">
-      <div class="inline-flex items-center space-x-2 tex-parchment border-[1.5px] border-[#2a231b] px-2.5 py-1 text-xs font-mono font-bold ml-1 relative z-10 paper-tab-shadow">
-        <span class="tracking-wide">YOUTUBE</span>
-        <span class="bg-[#f0c2ba] text-[#69241b] text-[10px] font-sans font-bold px-1.5 py-0.2 rounded-sm border border-[#dc9f95] uppercase">
-          VIDEO
-        </span>
-        <span class="border border-[#2a231b] px-1 py-0 text-[10px]">${items.length}</span>
-      </div>
-      <div class="tex-parchment border border-[#a48663] p-3 md:p-4 -mt-2.5 paper-shadow rounded-sm relative">
-        <div class="${gridClass}">
-          ${items
-            .map(
-              (item) => `
-            <article class="relative">
-              <div class="w-full aspect-video rounded-sm overflow-hidden border border-black/20 shadow-lg bg-[#0a0a0c] relative">
-                <div class="relative w-full h-full cursor-pointer group overflow-hidden" data-yt-id="${esc(item.videoId)}" data-yt-url="${esc(item.url)}">
-                  ${
-                    item.thumbnailUrl
-                      ? `<img src="${esc(item.thumbnailUrl)}" alt="${esc(item.title)}" loading="lazy" class="object-cover w-full h-full transform transition-transform duration-500 group-hover:scale-105 opacity-90" />`
-                      : ''
-                  }
-                  <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-black/30 pointer-events-none"></div>
-                  <div class="absolute inset-0 flex items-center justify-center">
-                    <div class="w-12 h-12 rounded-[2px] bg-black/60 backdrop-blur-md border border-white/25 text-white flex items-center justify-center shadow-lg group-hover:bg-amber-400 group-hover:text-black group-hover:border-amber-300 transition-all duration-300">
-                      <svg class="w-4 h-4 fill-current ml-0.5" viewBox="0 0 24 24"><polygon points="6 3 20 12 6 21"></polygon></svg>
-                    </div>
-                  </div>
-                  <div class="absolute inset-x-2 bottom-2 px-2.5 py-1.5 rounded-[2px] bg-black/75 backdrop-blur-md border border-white/10 flex items-center space-x-2.5">
-                    <span class="text-white flex-shrink-0"><svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><polygon points="6 3 20 12 6 21"></polygon></svg></span>
-                    <div class="flex-1 bg-white/20 h-[2px] relative flex items-center">
-                      <div class="w-1/4 bg-white h-full relative">
-                        <div class="absolute -right-1 -top-[3px] w-2 h-2 bg-white rounded-[1px] shadow-sm"></div>
-                      </div>
-                    </div>
-                    <span class="text-[10px] font-mono font-bold text-white/90 tracking-wider tabular-nums flex-shrink-0">YT</span>
-                  </div>
-                </div>
-              </div>
-              <div class="mt-1.5 flex items-baseline justify-between gap-2 font-mono text-[11px] leading-snug text-[#1e1c19]">
-                <a href="${esc(item.url)}" target="_blank" rel="noopener noreferrer" class="hover:underline">
-                  <span class="font-bold">${esc(item.source)}</span> &mdash; <span class="italic">&ldquo;${esc(item.title)}&rdquo;</span>
-                </a>
-                <span class="text-[10px] text-[#4d4235] whitespace-nowrap flex-shrink-0">${esc(formatStamp(item.publishedAt))}</span>
-              </div>
-            </article>`
-            )
-            .join('')}
-        </div>
-      </div>
-    </section>
-  `;
+function badgeClasses(color) {
+  if (color === 'red') return 'bg-[#f0c2ba] text-[#69241b] border-[#dc9f95]';
+  if (color === 'green') return 'bg-[#c2eecf] text-[#185e33] border-[#a2d8b1]';
+  if (color === 'kraft') return 'bg-[#dec6a4] text-[#3a2814] border-[#b4966e]';
+  return 'bg-[#f5dfa0] text-[#593e0c] border-[#d6b96c]';
 }
 
-function renderAudioSection(items, expanded = false) {
-  if (!items.length) return '';
-  const listClass = expanded
-    ? 'grid grid-cols-1 md:grid-cols-2 gap-4 pt-1 font-mono text-xs'
-    : 'space-y-3.5 pt-1 font-mono text-xs';
+function panelSpanClass(colSpan) {
+  if (Number(colSpan) === 3) return 'md:col-span-2 lg:col-span-3';
+  if (Number(colSpan) === 2) return 'md:col-span-2 lg:col-span-2';
+  return '';
+}
 
-  return `
-    <section class="relative pt-1 lg:pt-0" data-purpose="audio-podcasts-section">
-      <div class="inline-flex items-center space-x-2 tex-parchment border-[1.5px] border-[#2a231b] px-2.5 py-1 text-xs font-mono font-bold ml-1 relative z-10 paper-tab-shadow">
-        <span class="tracking-wide">AUDIO</span>
-        <span class="bg-[#c2eecf] text-[#185e33] text-[10px] font-sans font-bold px-1.5 py-0.2 rounded-sm border border-[#a2d8b1] uppercase">
-          PODCASTS
-        </span>
-        <span class="border border-[#2a231b] px-1 py-0 text-[10px]">${items.length}</span>
-      </div>
-      <div class="tex-lined border border-[#d3caa8] p-3.5 -mt-2.5 paper-shadow rounded-sm relative text-[#201c17]">
-        <div class="${listClass}">
-          ${items
-            .map((item, idx) => {
-              const isPlaying = state.activeAudioId === item.id;
-              return `
-              ${!expanded && idx > 0 ? '<div class="border-b border-[#cfc8b0]/80"></div>' : ''}
-              <article class="space-y-2 ${expanded ? 'border-b border-[#cfc8b0]/70 pb-3' : ''}">
-                <div class="flex items-start justify-between gap-2">
-                  <div class="flex items-start space-x-2 min-w-0">
-                    <svg class="w-5 h-5 mt-0.5 flex-shrink-0 text-[#251e17]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                      <path d="M3 18v-6a9 9 0 0 1 18 0v6"></path>
-                      <path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path>
-                    </svg>
-                    <div class="min-w-0">
-                      <div class="font-bold text-[13px] leading-tight">${esc(item.source)} &mdash;</div>
-                      <a href="${esc(item.url)}" target="_blank" rel="noopener noreferrer" class="italic text-[11px] text-[#2f271f] font-medium leading-tight hover:underline block">
-                        &ldquo;${esc(item.title)}&rdquo;
-                      </a>
-                      <div class="text-[10px] text-[#4d4235] mt-1">${esc(formatStamp(item.publishedAt))}</div>
-                    </div>
-                  </div>
-                  <div class="flex flex-col items-end flex-shrink-0">
-                    ${
-                      item.audioUrl
-                        ? `<button type="button" data-audio-toggle="${esc(item.id)}"
-                            class="border border-[#221c17] px-2 py-0.5 text-xs font-mono font-bold flex items-center space-x-1 bg-[#f9f5e6]/80 hover:bg-white shadow-sm cursor-pointer">
-                            <span>${isPlaying ? '&#9632;' : '&#9654;'}</span>
-                            <span>${esc(item.duration || 'PLAY')}</span>
-                          </button>`
-                        : `<a href="${esc(item.url)}" target="_blank" rel="noopener noreferrer"
-                            class="border border-[#221c17] px-2 py-0.5 text-xs font-mono font-bold bg-[#f9f5e6]/80 hover:bg-white shadow-sm">
-                            OPEN
-                          </a>`
-                    }
-                    <span class="text-[10px] text-[#4d4235] mt-1">${esc(formatStamp(item.publishedAt))}</span>
-                  </div>
-                </div>
+function renderPanel(panel, items, expanded = false) {
+  if (!items.length) return '';
+  const backingClass = panel.backing === 'parchment' ? 'tex-parchment border-[#a48663]' : 'tex-lined border-[#d3caa8]';
+  const badgeCls = badgeClasses(panel.badgeColor);
+  const cols = expanded ? 3 : Number(panel.colSpan) || 1;
+
+  let bodyHtml = '';
+  if (panel.category === 'youtube') {
+    const gridClass =
+      cols >= 3
+        ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pt-1'
+        : cols === 2
+        ? 'grid grid-cols-1 md:grid-cols-2 gap-4 pt-1'
+        : 'space-y-4 pt-1';
+
+    bodyHtml = `
+      <div class="${gridClass}">
+        ${items
+          .map(
+            (item) => `
+          <article class="relative">
+            <div class="w-full aspect-video rounded-sm overflow-hidden border border-black/20 shadow-lg bg-[#0a0a0c] relative">
+              <div class="relative w-full h-full cursor-pointer group overflow-hidden" data-yt-id="${esc(item.videoId)}" data-yt-url="${esc(item.url)}">
                 ${
-                  isPlaying && item.audioUrl
-                    ? `<audio controls autoplay class="w-full h-8 mt-1" src="${esc(item.audioUrl)}"></audio>`
+                  item.thumbnailUrl
+                    ? `<img src="${esc(item.thumbnailUrl)}" alt="${esc(item.title)}" loading="lazy" class="object-cover w-full h-full transform transition-transform duration-500 group-hover:scale-105 opacity-90" />`
                     : ''
                 }
-              </article>`;
-            })
-            .join('')}
-        </div>
-      </div>
-    </section>
-  `;
-}
-
-function renderTextSection(items, expanded = false) {
-  if (!items.length) return '';
-  const listClass = expanded
-    ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pt-1 font-mono text-xs'
-    : 'space-y-3.5 pt-1 font-mono text-xs';
+                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-black/30 pointer-events-none"></div>
+                <div class="absolute inset-0 flex items-center justify-center">
+                  <div class="w-12 h-12 rounded-[2px] bg-black/60 backdrop-blur-md border border-white/25 text-white flex items-center justify-center shadow-lg group-hover:bg-amber-400 group-hover:text-black group-hover:border-amber-300 transition-all duration-300">
+                    <svg class="w-4 h-4 fill-current ml-0.5" viewBox="0 0 24 24"><polygon points="6 3 20 12 6 21"></polygon></svg>
+                  </div>
+                </div>
+                <div class="absolute inset-x-2 bottom-2 px-2.5 py-1.5 rounded-[2px] bg-black/75 backdrop-blur-md border border-white/10 flex items-center space-x-2.5">
+                  <span class="text-white flex-shrink-0"><svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><polygon points="6 3 20 12 6 21"></polygon></svg></span>
+                  <div class="flex-1 bg-white/20 h-[2px] relative flex items-center">
+                    <div class="w-1/4 bg-white h-full relative">
+                      <div class="absolute -right-1 -top-[3px] w-2 h-2 bg-white rounded-[1px] shadow-sm"></div>
+                    </div>
+                  </div>
+                  <span class="text-[10px] font-mono font-bold text-white/90 tracking-wider tabular-nums flex-shrink-0">YT</span>
+                </div>
+              </div>
+            </div>
+            <div class="mt-1.5 flex items-baseline justify-between gap-2 font-mono text-[11px] leading-snug text-[#1e1c19]">
+              <a href="${esc(item.url)}" target="_blank" rel="noopener noreferrer" class="hover:underline">
+                <span class="font-bold">${esc(item.source)}</span> &mdash; <span class="italic">&ldquo;${esc(item.title)}&rdquo;</span>
+              </a>
+              <span class="text-[10px] text-[#4d4235] whitespace-nowrap flex-shrink-0">${esc(formatStamp(item.publishedAt))}</span>
+            </div>
+          </article>`
+          )
+          .join('')}
+      </div>`;
+  } else if (panel.category === 'audio') {
+    const listClass = cols >= 2 ? 'grid grid-cols-1 md:grid-cols-2 gap-4 pt-1 font-mono text-xs' : 'space-y-3.5 pt-1 font-mono text-xs';
+    bodyHtml = `
+      <div class="${listClass}">
+        ${items
+          .map((item, idx) => {
+            const isPlaying = state.activeAudioId === item.id;
+            return `
+            ${cols === 1 && idx > 0 ? '<div class="border-b border-[#cfc8b0]/80"></div>' : ''}
+            <article class="space-y-2 ${cols >= 2 ? 'border-b border-[#cfc8b0]/70 pb-3' : ''}">
+              <div class="flex items-start justify-between gap-2">
+                <div class="flex items-start space-x-2 min-w-0">
+                  <svg class="w-5 h-5 mt-0.5 flex-shrink-0 text-[#251e17]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path d="M3 18v-6a9 9 0 0 1 18 0v6"></path>
+                    <path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path>
+                  </svg>
+                  <div class="min-w-0">
+                    <div class="font-bold text-[13px] leading-tight">${esc(item.source)} &mdash;</div>
+                    <a href="${esc(item.url)}" target="_blank" rel="noopener noreferrer" class="italic text-[11px] text-[#2f271f] font-medium leading-tight hover:underline block">
+                      &ldquo;${esc(item.title)}&rdquo;
+                    </a>
+                    <div class="text-[10px] text-[#4d4235] mt-1">${esc(formatStamp(item.publishedAt))}</div>
+                  </div>
+                </div>
+                <div class="flex flex-col items-end flex-shrink-0">
+                  ${
+                    item.audioUrl
+                      ? `<button type="button" data-audio-toggle="${esc(item.id)}"
+                          class="border border-[#221c17] px-2 py-0.5 text-xs font-mono font-bold flex items-center space-x-1 bg-[#f9f5e6]/80 hover:bg-white shadow-sm cursor-pointer">
+                          <span>${isPlaying ? '&#9632;' : '&#9654;'}</span>
+                          <span>${esc(item.duration || 'PLAY')}</span>
+                        </button>`
+                      : `<a href="${esc(item.url)}" target="_blank" rel="noopener noreferrer"
+                          class="border border-[#221c17] px-2 py-0.5 text-xs font-mono font-bold bg-[#f9f5e6]/80 hover:bg-white shadow-sm">
+                          OPEN
+                        </a>`
+                  }
+                  <span class="text-[10px] text-[#4d4235] mt-1">${esc(formatStamp(item.publishedAt))}</span>
+                </div>
+              </div>
+              ${
+                isPlaying && item.audioUrl
+                  ? `<audio controls autoplay class="w-full h-8 mt-1" src="${esc(item.audioUrl)}"></audio>`
+                  : ''
+              }
+            </article>`;
+          })
+          .join('')}
+      </div>`;
+  } else {
+    const listClass =
+      cols >= 3
+        ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pt-1 font-mono text-xs'
+        : cols === 2
+        ? 'grid grid-cols-1 md:grid-cols-2 gap-4 pt-1 font-mono text-xs'
+        : 'space-y-3.5 pt-1 font-mono text-xs';
+    bodyHtml = `
+      <div class="${listClass}">
+        ${items
+          .map(
+            (item, idx) => `
+          ${cols === 1 && idx > 0 ? '<div class="border-b border-[#cfc8b0]/80"></div>' : ''}
+          <article class="space-y-1 ${cols >= 2 ? 'border-b border-[#cfc8b0]/70 pb-3' : ''}">
+            <div class="flex items-baseline justify-between gap-2">
+              <span class="font-bold text-[12px] text-[#251e17]">${esc(item.source)}</span>
+              <span class="text-[10px] text-[#4d4235] flex-shrink-0">${esc(formatStamp(item.publishedAt))}</span>
+            </div>
+            <a href="${esc(item.url)}" target="_blank" rel="noopener noreferrer" class="block font-bold text-[13px] leading-snug text-[#1a1612] hover:underline">
+              &ldquo;${esc(item.title)}&rdquo;
+            </a>
+            ${
+              item.excerpt
+                ? `<p class="text-[11px] leading-relaxed text-[#3d342a]">${esc(item.excerpt)}${item.excerpt.length >= 235 ? '...' : ''}</p>`
+                : ''
+            }
+          </article>`
+          )
+          .join('')}
+      </div>`;
+  }
 
   return `
-    <section class="relative pt-1" data-purpose="text-articles-section">
+    <section class="relative ${expanded ? '' : panelSpanClass(panel.colSpan)}">
       <div class="inline-flex items-center space-x-2 tex-parchment border-[1.5px] border-[#2a231b] px-2.5 py-1 text-xs font-mono font-bold ml-1 relative z-10 paper-tab-shadow">
-        <span class="tracking-wide">TEXT</span>
-        <span class="bg-[#f5dfa0] text-[#593e0c] text-[10px] font-sans font-bold px-1.5 py-0.2 rounded-sm border border-[#d6b96c] uppercase">
-          ARTICLES
+        <span class="tracking-wide">${esc(panel.title)}</span>
+        <span class="${badgeCls} text-[10px] font-sans font-bold px-1.5 py-0.2 rounded-sm border uppercase">
+          ${esc(panel.badge)}
         </span>
         <span class="border border-[#2a231b] px-1 py-0 text-[10px]">${items.length}</span>
       </div>
-      <div class="tex-lined border border-[#d3caa8] p-3.5 -mt-2.5 paper-shadow rounded-sm relative text-[#201c17]">
-        <div class="${listClass}">
-          ${items
-            .map(
-              (item, idx) => `
-            ${!expanded && idx > 0 ? '<div class="border-b border-[#cfc8b0]/80"></div>' : ''}
-            <article class="space-y-1 ${expanded ? 'border-b border-[#cfc8b0]/70 pb-3' : ''}">
-              <div class="flex items-baseline justify-between gap-2">
-                <span class="font-bold text-[12px] text-[#251e17]">${esc(item.source)}</span>
-                <span class="text-[10px] text-[#4d4235] flex-shrink-0">${esc(formatStamp(item.publishedAt))}</span>
-              </div>
-              <a href="${esc(item.url)}" target="_blank" rel="noopener noreferrer" class="block font-bold text-[13px] leading-snug text-[#1a1612] hover:underline">
-                &ldquo;${esc(item.title)}&rdquo;
-              </a>
-              ${
-                item.excerpt
-                  ? `<p class="text-[11px] leading-relaxed text-[#3d342a]">${esc(item.excerpt)}${item.excerpt.length >= 235 ? '...' : ''}</p>`
-                  : ''
-              }
-            </article>`
-            )
-            .join('')}
-        </div>
+      <div class="${backingClass} border p-3.5 -mt-2.5 paper-shadow rounded-sm relative text-[#201c17]">
+        ${bodyHtml}
       </div>
     </section>
   `;
@@ -266,30 +262,35 @@ function renderTextSection(items, expanded = false) {
 
 function renderFeedTab() {
   const all = state.feeds.items || [];
-  const yt = all.filter((i) => i.category === 'youtube');
-  const text = all.filter((i) => i.category === 'text');
-  const audio = all.filter((i) => i.category === 'audio');
+  const panels = (state.layout?.panels || []).length
+    ? state.layout.panels
+    : [
+        { id: 'panel-youtube', title: 'YOUTUBE', badge: 'VIDEO', badgeColor: 'red', category: 'youtube', backing: 'parchment', colSpan: 1, windowSize: 6, feedIds: [] },
+        { id: 'panel-audio', title: 'AUDIO', badge: 'PODCASTS', badgeColor: 'green', category: 'audio', backing: 'lined', colSpan: 1, windowSize: 8, feedIds: [] },
+        { id: 'panel-text', title: 'TEXT', badge: 'ARTICLES', badgeColor: 'amber', category: 'text', backing: 'lined', colSpan: 1, windowSize: 8, feedIds: [] },
+      ];
+
+  const itemsForPanel = (p) => {
+    const allowed = Array.isArray(p.feedIds) && p.feedIds.length ? new Set(p.feedIds) : null;
+    const filtered = all.filter((i) => i.category === p.category && (!allowed || allowed.has(i.feedId)));
+    return filtered.slice(0, Number(p.windowSize) || 8);
+  };
 
   let html = '';
   if (state.feedFilter === 'all') {
-    const ytHtml = renderYouTubeSection(yt, false);
-    const audioHtml = renderAudioSection(audio, false);
-    const textHtml = renderTextSection(text, false);
-    if (ytHtml || audioHtml || textHtml) {
+    const rendered = panels.map((p) => renderPanel(p, itemsForPanel(p), false)).filter(Boolean);
+    if (rendered.length) {
       html = `
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 items-start">
-          ${ytHtml ? `<div>${ytHtml}</div>` : ''}
-          ${audioHtml ? `<div>${audioHtml}</div>` : ''}
-          ${textHtml ? `<div>${textHtml}</div>` : ''}
+          ${rendered.join('')}
         </div>
       `;
     }
-  } else if (state.feedFilter === 'youtube') {
-    html = renderYouTubeSection(yt, true);
-  } else if (state.feedFilter === 'audio') {
-    html = renderAudioSection(audio, true);
-  } else if (state.feedFilter === 'text') {
-    html = renderTextSection(text, true);
+  } else {
+    const matchingPanels = panels.filter((p) => p.category === state.feedFilter);
+    if (matchingPanels.length) {
+      html = `<div class="space-y-5">${matchingPanels.map((p) => renderPanel(p, itemsForPanel(p), true)).join('')}</div>`;
+    }
   }
 
   if (!html) {
@@ -495,13 +496,15 @@ async function init() {
   updateNavUI();
   renderSubnav();
 
-  const [feedsRes, dispRes, aboutRes] = await Promise.all([
+  const [feedsRes, layoutRes, dispRes, aboutRes] = await Promise.all([
     fetch('/api/feeds').then((r) => r.json()).catch(() => ({ items: [] })),
+    fetch('/api/layout').then((r) => r.json()).catch(() => ({ panels: [] })),
     fetch('/api/dispatches').then((r) => r.json()).catch(() => ({ items: [] })),
     fetch('/api/about').then((r) => r.json()).catch(() => null),
   ]);
 
   state.feeds = feedsRes;
+  state.layout = layoutRes;
   state.dispatches = dispRes.items || [];
   state.about = aboutRes;
   render();

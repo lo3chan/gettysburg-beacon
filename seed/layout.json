@@ -1,0 +1,40 @@
+{
+  "panels": [
+    {
+      "id": "panel-youtube",
+      "title": "YOUTUBE",
+      "badge": "VIDEO",
+      "badgeColor": "red",
+      "category": "youtube",
+      "backing": "parchment",
+      "order": 0,
+      "colSpan": 1,
+      "windowSize": 6,
+      "feedIds": []
+    },
+    {
+      "id": "panel-audio",
+      "title": "AUDIO",
+      "badge": "PODCASTS",
+      "badgeColor": "green",
+      "category": "audio",
+      "backing": "lined",
+      "order": 1,
+      "colSpan": 1,
+      "windowSize": 8,
+      "feedIds": []
+    },
+    {
+      "id": "panel-text",
+      "title": "TEXT",
+      "badge": "ARTICLES",
+      "badgeColor": "amber",
+      "category": "text",
+      "backing": "lined",
+      "order": 2,
+      "colSpan": 1,
+      "windowSize": 8,
+      "feedIds": []
+    }
+  ]
+}

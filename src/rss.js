@@ -145,7 +145,7 @@ function normalizeAtomEntry(entry, feed) {
   };
 }
 
-export async function fetchSingleFeed(feed, limit = 8) {
+export async function fetchSingleFeed(feed, limit = 25) {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), 8000);
   try {
@@ -188,7 +188,7 @@ export async function fetchSingleFeed(feed, limit = 8) {
 
 export async function aggregateFeeds(feeds) {
   const enabled = feeds.filter((f) => f.enabled !== false);
-  const results = await Promise.all(enabled.map((f) => fetchSingleFeed(f, 8)));
+  const results = await Promise.all(enabled.map((f) => fetchSingleFeed(f, 25)));
 
   const items = [];
   const status = {};

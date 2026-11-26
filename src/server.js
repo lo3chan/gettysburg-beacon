@@ -101,6 +101,19 @@ try {
   // ignore corrupt cache
 }
 
+function isEditorHost(req) {
+  const rawHost = String(req.headers['x-forwarded-host'] || req.headers.host || req.hostname || '').toLowerCase();
+  const host = rawHost.split(':')[0];
+  return host === 'edit.gettysburgbeacon.com' || host === 'localhost' || host === '127.0.0.1';
+}
+
+function requireEditorHost(req, res, next) {
+  if (!isEditorHost(req)) {
+    return res.status(403).json({ error: 'Editor is only accessible on edit.gettysburgbeacon.com' });
+  }
+  next();
+}
+
 function requireAdmin(req, res, next) {
   if (!ADMIN_TOKEN) {
     return res.status(503).json({ error: 'ADMIN_TOKEN is not configured on server' });
@@ -147,6 +160,77 @@ app.get('/api/dispatches', (_req, res) => {
 // Public API: about / business card
 app.get('/api/about', (_req, res) => {
   res.json(readJson('about.json'));
+});
+
+// Public API: corkboard panel layout
+app.get('/api/layout', (_req, res) => {
+  const layout = readJson('layout.json');
+  if (Array.isArray(layout?.panels)) {
+    layout.panels.sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+  }
+  res.json(layout);
+});
+
+// Editor Portal APIs (gated to edit.gettysburgbeacon.com / localhost)
+app.get('/api/editor/state', requireEditorHost, async (_req, res) => {
+  try {
+    const [feedData] = await Promise.all([getAggregatedFeeds(false)]);
+    const layout = readJson('layout.json');
+    if (Array.isArray(layout?.panels)) {
+      layout.panels.sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+    }
+    res.json({
+      layout,
+      feeds: readJson('feeds.json'),
+      feedStatus: feedData.status,
+      updatedAt: feedData.updatedAt,
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.put('/api/editor/layout', requireEditorHost, (req, res) => {
+  const { panels } = req.body || {};
+  if (!Array.isArray(panels)) {
+    return res.status(400).json({ error: 'Expected { panels: [...] }' });
+  }
+  const normalized = panels.map((p, idx) => ({
+    id: String(p.id || `panel-${Date.now()}-${idx}`),
+    title: String(p.title || 'PANEL').trim() || 'PANEL',
+    badge: String(p.badge || 'FEED').trim() || 'FEED',
+    badgeColor: ['red', 'green', 'amber', 'kraft'].includes(p.badgeColor) ? p.badgeColor : 'amber',
+    category: ['youtube', 'audio', 'text'].includes(p.category) ? p.category : 'text',
+    backing: p.backing === 'parchment' ? 'parchment' : 'lined',
+    order: idx,
+    colSpan: [1, 2, 3].includes(Number(p.colSpan)) ? Number(p.colSpan) : 1,
+    windowSize: Math.max(1, Math.min(30, Number(p.windowSize) || 6)),
+    feedIds: Array.isArray(p.feedIds) ? p.feedIds.map(String) : [],
+  }));
+  writeJson('layout.json', { panels: normalized });
+  res.json({ ok: true, panels: normalized });
+});
+
+app.put('/api/editor/feeds', requireEditorHost, async (req, res) => {
+  if (!Array.isArray(req.body)) {
+    return res.status(400).json({ error: 'Expected JSON array of feeds' });
+  }
+  const feeds = req.body.map((f, idx) => ({
+    id: String(f.id || `feed-${Date.now()}-${idx}`),
+    title: String(f.title || 'Untitled Feed').trim(),
+    category: ['youtube', 'audio', 'text'].includes(f.category) ? f.category : 'text',
+    url: String(f.url || '').trim(),
+    siteUrl: String(f.siteUrl || '').trim(),
+    enabled: f.enabled !== false,
+  }));
+  writeJson('feeds.json', feeds);
+  const data = await getAggregatedFeeds(true);
+  res.json({ ok: true, feeds, feedStatus: data.status, updatedAt: data.updatedAt });
+});
+
+app.post('/api/editor/refresh', requireEditorHost, async (_req, res) => {
+  const data = await getAggregatedFeeds(true);
+  res.json({ ok: true, updatedAt: data.updatedAt, feedStatus: data.status, count: data.items.length });
 });
 
 // Public RSS 2.0 feed of Dispatches
@@ -257,6 +341,19 @@ app.post('/api/admin/refresh', requireAdmin, async (_req, res) => {
   res.json({ ok: true, updatedAt: data.updatedAt, count: data.items.length });
 });
 
+app.get('/', (req, res, next) => {
+  if (isEditorHost(req) && (req.headers['x-forwarded-host'] || req.headers.host || '').toLowerCase().startsWith('edit.')) {
+    res.setHeader('Cache-Control', 'no-cache');
+    return res.sendFile(path.join(PUBLIC_DIR, 'editor.html'));
+  }
+  next();
+});
+
+app.get('/editor.html', requireEditorHost, (_req, res) => {
+  res.setHeader('Cache-Control', 'no-cache');
+  res.sendFile(path.join(PUBLIC_DIR, 'editor.html'));
+});
+
 app.use(
   express.static(PUBLIC_DIR, {
     extensions: ['html'],
@@ -268,7 +365,11 @@ app.use(
   })
 );
 
-app.get('*', (_req, res) => {
+app.get('*', (req, res) => {
+  if (isEditorHost(req) && (req.headers['x-forwarded-host'] || req.headers.host || '').toLowerCase().startsWith('edit.')) {
+    res.setHeader('Cache-Control', 'no-cache');
+    return res.sendFile(path.join(PUBLIC_DIR, 'editor.html'));
+  }
   res.sendFile(path.join(PUBLIC_DIR, 'index.html'));
 });
 
